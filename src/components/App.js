@@ -1,42 +1,45 @@
+// App.js
 import React, { useState } from "react";
 import CategoryFilter from "./CategoryFilter";
 import NewTaskForm from "./NewTaskForm";
 import TaskList from "./TaskList";
-import { render } from '@testing-library/react';
+
 import { CATEGORIES, TASKS } from "../data";
-console.log("Here's the data you're working with");
-console.log({ CATEGORIES, TASKS });
 
 function App() {
   const [tasks, setTasks] = useState(TASKS);
+  const [filteredCategory, setFilteredCategory] = useState("All");
 
-  const handleTaskFormSubmit = (newTask) => {
-    setTasks([...tasks, newTask]);
+  const filterTasks = category => {
+    setFilteredCategory(category);
   };
 
-  const filterTasksByCategory = (category) => {
-    if (category === "All") {
-      setTasks(TASKS); // Show all tasks
-    } else {
-      const filteredTasks = TASKS.filter(task => task.category === category);
-      setTasks(filteredTasks); // Show tasks filtered by category
-    }
+  const addTask = task => {
+    setTasks([...tasks, task]);
   };
+
+  const deleteTask = index => {
+    const updatedTasks = tasks.filter((task, i) => i !== index);
+    setTasks(updatedTasks);
+  };
+
+  const filteredTasks =
+    filteredCategory === "All"
+      ? tasks
+      : tasks.filter(task => task.category === filteredCategory);
 
   return (
     <div className="App">
       <h2>My tasks</h2>
-      <CategoryFilter categories={CATEGORIES} onCategorySelect={filterTasksByCategory} />
-      <NewTaskForm categories={CATEGORIES} onTaskFormSubmit={handleTaskFormSubmit} />
-      <TaskList tasks={tasks} />
+      <CategoryFilter
+        categories={CATEGORIES}
+        onFilter={filterTasks}
+        activeCategory={filteredCategory}
+      />
+      <NewTaskForm categories={CATEGORIES} onTaskFormSubmit={addTask} />
+      <TaskList tasks={filteredTasks} onDeleteTask={deleteTask} /> {/* Pass deleteTask function as onDeleteTask prop */}
     </div>
   );
 }
 
 export default App;
-
-test('does not contain specific element', () => {
-  const { queryByText } = render(<CategoryFilter categories={["Grocery"]} />);
-  const element = queryByText('Buy rice');
-  expect(element).toBeNull();
-});

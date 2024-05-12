@@ -1,8 +1,9 @@
+// Task.js
 import React from "react";
 
-function Task({ text, category, onDelete }) {
+function Task({ text, category, index, onDelete }) {
   const handleDelete = () => {
-  onDelete();
+    onDelete(index); // Call onDelete function with index when delete button is clicked
   };
 
   return (
@@ -17,4 +18,3 @@ function Task({ text, category, onDelete }) {
 }
 
 export default Task;
-
